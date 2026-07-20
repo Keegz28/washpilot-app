@@ -23,7 +23,7 @@ const Savings = {
                             <span>${Utils.formatCurrency(g.currentAmount || 0)} saved</span>
                             <span>Target: ${Utils.formatCurrency(g.targetAmount)}</span>
                         </div>
-                        ${remaining > 0 ? `<div style="font-size:12px;color:var(--text-muted);margin-top:4px;">~${daysLeft} days to go at current rate</div>` : '<div style="font-size:12px;color:var(--success);margin-top:4px;">Goal reached! 🎉</div>'}
+                        ${remaining > 0 ? `<div style="font-size:12px;color:var(--text-tertiary);margin-top:4px;">~${daysLeft} days to go at current rate</div>` : '<div style="font-size:12px;color:var(--success);margin-top:4px;">Goal reached! 🎉</div>'}
                         <div style="margin-top:12px;display:flex;gap:8px;">
                             <button class="btn btn-primary btn-sm add-funds-btn" data-id="${g.id}">+ Add Funds</button>
                             <button class="btn btn-outline btn-sm edit-goal-btn" data-id="${g.id}">Edit</button>
@@ -43,7 +43,7 @@ const Savings = {
                 <div class="card" style="margin-bottom:16px;">
                     <div class="card-title" style="margin-bottom:4px;">Avg Daily Income</div>
                     <div style="font-size:20px;font-weight:700;color:var(--success);">${Utils.formatCurrency(avgDaily)}</div>
-                    <div style="font-size:12px;color:var(--text-muted);">Based on last 30 days</div>
+                    <div style="font-size:12px;color:var(--text-tertiary);">Based on last 30 days</div>
                 </div>
                 ${goalsHTML}
             </div>

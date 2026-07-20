@@ -44,7 +44,7 @@ const Settings = {
                     <button class="btn btn-danger" id="set-clear" style="width:100%;">Clear All Data</button>
                 </div>
 
-                <div style="text-align:center;padding:16px;color:var(--text-muted);font-size:12px;">
+                <div style="text-align:center;padding:16px;color:var(--text-tertiary);font-size:12px;">
                     WashPilot v1.0<br>
                     All data stored locally on your device
                 </div>
@@ -150,7 +150,7 @@ const Settings = {
                         <li>${(data.invoices || []).length} invoices</li>
                         <li>${(data.sops || []).length} SOPs</li>
                     </ul>
-                    <p style="margin-bottom:16px;font-size:13px;color:var(--text-muted);">Existing data will be preserved. Duplicate IDs will be overwritten.</p>
+                    <p style="margin-bottom:16px;font-size:13px;color:var(--text-tertiary);">Existing data will be preserved. Duplicate IDs will be overwritten.</p>
                     <button class="btn btn-primary" id="set-confirm-import">Import Now</button>
                 `);
 

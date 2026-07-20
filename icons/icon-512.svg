@@ -1,5 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
-  <rect width="512" height="512" rx="100" fill="#0f172a"/>
-  <text x="256" y="200" text-anchor="middle" font-family="Arial,sans-serif" font-size="128" font-weight="bold" fill="#3b82f6">WP</text>
-  <text x="256" y="320" text-anchor="middle" font-family="Arial,sans-serif" font-size="56" fill="#f1f5f9">WashPilot</text>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="108" fill="url(#bg)"/>
+  <circle cx="256" cy="200" r="96" fill="url(#blue)" filter="url(#glow)" opacity="0.9"/>
+  <path d="M218 200 C218 168 256 140 256 140 C256 140 294 168 294 200 C294 220 278 236 256 236 C234 236 218 220 218 200Z" fill="#fff" opacity="0.9"/>
+  <circle cx="256" cy="196" r="16" fill="url(#blue)"/>
+  <text x="256" y="350" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,system-ui,sans-serif" font-size="56" font-weight="700" fill="#f1f5f9" letter-spacing="2">WashPilot</text>
+  <text x="256" y="400" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,system-ui,sans-serif" font-size="24" font-weight="500" fill="#64748b" letter-spacing="6">CAR WASH</text>
 </svg>

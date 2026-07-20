@@ -44,7 +44,7 @@ const Tax = {
         });
 
         const catRows = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1]).map(([cat, amt]) =>
-            `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);"><span>${cat}</span><span style="font-weight:600;">${Utils.formatCurrency(amt)}</span></div>`
+            `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border-subtle);"><span>${cat}</span><span style="font-weight:600;">${Utils.formatCurrency(amt)}</span></div>`
         ).join('');
 
         container.innerHTML = `
@@ -71,12 +71,12 @@ const Tax = {
                 <div class="card">
                     <div class="card-header"><span class="card-title">Tax Breakdown</span></div>
                     ${breakdown.map(b => `
-                        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:14px;">
+                        <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border-subtle);font-size:14px;">
                             <span>${b.name} (${(b.rate * 100).toFixed(0)}%)</span>
                             <span>${Utils.formatCurrency(b.tax)}</span>
                         </div>
                     `).join('')}
-                    <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;font-weight:600;border-top:2px solid var(--border);margin-top:4px;">
+                    <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:14px;font-weight:600;border-top:2px solid var(--border-default);margin-top:4px;">
                         <span>Income Tax</span><span>${Utils.formatCurrency(taxOwed)}</span>
                     </div>
                     <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:14px;color:var(--text-secondary);">
@@ -90,7 +90,7 @@ const Tax = {
                     </div>
                 ` : ''}
                 <button class="btn btn-primary" id="tax-export" style="margin-top:8px;">Export Report as Text</button>
-                <p style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:8px;">Estimates based on 2024/25 UK tax rates. Consult an accountant for accurate figures.</p>
+                <p style="font-size:11px;color:var(--text-tertiary);text-align:center;margin-top:8px;">Estimates based on 2024/25 UK tax rates. Consult an accountant for accurate figures.</p>
             </div>
         `;
 

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'washpilot-v3';
+const CACHE_NAME = 'washpilot-v4';
 const BASE = self.registration.scope;
 
 const ASSETS = [

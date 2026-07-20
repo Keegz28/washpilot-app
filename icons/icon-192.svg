@@ -1,5 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
-  <rect width="192" height="192" rx="40" fill="#0f172a"/>
-  <text x="96" y="75" text-anchor="middle" font-family="Arial,sans-serif" font-size="48" font-weight="bold" fill="#3b82f6">WP</text>
-  <text x="96" y="125" text-anchor="middle" font-family="Arial,sans-serif" font-size="20" fill="#f1f5f9">WashPilot</text>
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3b82f6"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="192" height="192" rx="42" fill="url(#bg)"/>
+  <circle cx="96" cy="80" r="36" fill="url(#blue)" filter="url(#glow)" opacity="0.9"/>
+  <path d="M82 80 C82 68 96 56 96 56 C96 56 110 68 110 80 C110 88 104 94 96 94 C88 94 82 88 82 80Z" fill="#fff" opacity="0.9"/>
+  <circle cx="96" cy="78" r="6" fill="url(#blue)"/>
+  <text x="96" y="140" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,system-ui,sans-serif" font-size="22" font-weight="700" fill="#f1f5f9" letter-spacing="1">WashPilot</text>
+  <text x="96" y="160" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,system-ui,sans-serif" font-size="10" font-weight="500" fill="#64748b" letter-spacing="2">CAR WASH</text>
 </svg>

@@ -14,7 +14,7 @@ const Expenses = {
         });
 
         const catBreakdown = Object.entries(byCat).sort((a, b) => b[1] - a[1]).map(([cat, amt]) =>
-            `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);"><span>${cat}</span><span style="font-weight:600;">${Utils.formatCurrency(amt)}</span></div>`
+            `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border-subtle);"><span>${cat}</span><span style="font-weight:600;">${Utils.formatCurrency(amt)}</span></div>`
         ).join('');
 
         const recent = records.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 20);

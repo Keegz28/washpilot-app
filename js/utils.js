@@ -36,8 +36,18 @@ const Utils = {
 
     showModal(title, bodyHTML, footerHTML = '') {
         document.getElementById('modal-title').textContent = title;
-        document.getElementById('modal-body').innerHTML = bodyHTML;
-        document.getElementById('modal-footer').innerHTML = footerHTML;
+        const body = document.getElementById('modal-body');
+        body.innerHTML = bodyHTML;
+        if (footerHTML) {
+            let footer = body.querySelector('.modal-footer');
+            if (!footer) {
+                footer = document.createElement('div');
+                footer.className = 'modal-footer';
+                footer.style.cssText = 'padding-top:16px;border-top:1px solid var(--border-subtle);margin-top:16px;';
+                body.appendChild(footer);
+            }
+            footer.innerHTML = footerHTML;
+        }
         document.getElementById('modal-overlay').style.display = 'flex';
     },
 
@@ -77,10 +87,9 @@ const Utils = {
     },
 
     getYearStart() {
-        const d = new Date();
-        d.setMonth(0, 1);
-        d.setHours(0, 0, 0, 0);
-        return d;
+        const now = new Date();
+        const year = now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1;
+        return new Date(year, 3, 6);
     },
 
     async encryptData(data, key) {

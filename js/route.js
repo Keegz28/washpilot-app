@@ -28,7 +28,7 @@ const Route = {
                         return new Date(a.date) - new Date(b.date);
                     }).map((b, i) => `
                         <div class="list-item" data-idx="${i}">
-                            <div class="list-icon" style="background:var(--accent);color:white;border-radius:50%;font-weight:700;font-size:14px;">${i + 1}</div>
+                            <div class="list-icon" style="background:var(--brand);color:white;border-radius:50%;font-weight:700;font-size:14px;">${i + 1}</div>
                             <div class="list-content">
                                 <div class="list-title">${Utils.escapeHTML(b.customerName || 'Unknown')}</div>
                                 <div class="list-subtitle">${Utils.escapeHTML(b.address)} ${b.priority ? '<span class="badge badge-priority">Priority</span>' : ''}</div>
@@ -72,7 +72,14 @@ const Route = {
             bookings.forEach((b, i) => {
                 this.geocode(b.address).then(coords => {
                     if (!coords) return;
-                    const marker = L.marker(coords)
+                    const marker = L.marker(coords, {
+                        icon: L.divIcon({
+                            className: '',
+                            html: `<div style="width:28px;height:28px;background:var(--brand);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);">${i + 1}</div>`,
+                            iconSize: [28, 28],
+                            iconAnchor: [14, 14]
+                        })
+                    })
                         .addTo(this.map)
                         .bindPopup(`<strong>${i + 1}. ${Utils.escapeHTML(b.customerName || '')}</strong><br>${Utils.escapeHTML(b.address)}`);
                     this.markers.push(marker);

@@ -9,7 +9,16 @@ const App = {
         this.bindModal();
         this.showView('dashboard');
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').catch(() => {});
+            navigator.serviceWorker.register('sw.js').then(reg => {
+                reg.addEventListener('updatefound', () => {
+                    const sw = reg.installing;
+                    sw.addEventListener('statechange', () => {
+                        if (sw.state === 'activated') {
+                            Utils.toast('App updated — refresh for latest version');
+                        }
+                    });
+                });
+            }).catch(() => {});
         }
     },
 
