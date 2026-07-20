@@ -214,16 +214,25 @@ body {
     color: var(--text-muted);
     font-size: 11px;
     cursor: pointer;
-    padding: 10px 14px;
-    border-radius: var(--radius-sm);
-    transition: color 0.2s;
+    padding: 8px 16px;
+    border-radius: 16px;
+    transition: all 0.2s ease;
     -webkit-tap-highlight-color: transparent;
     min-width: 60px;
     min-height: 48px;
+    position: relative;
 }
 
-.nav-btn.active { color: var(--accent); }
-.nav-icon { font-size: 24px; }
+.nav-btn.active {
+    color: var(--accent);
+    background: rgba(59, 130, 246, 0.1);
+}
+
+.nav-icon {
+    width: 24px;
+    height: 24px;
+}
+
 .nav-label { font-weight: 600; letter-spacing: 0.2px; }
 
 /* Cards */
