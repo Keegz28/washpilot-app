@@ -9,7 +9,7 @@ const App = {
         this.bindModal();
         this.showView('dashboard');
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').catch(() => {});
+            navigator.serviceWorker.register('sw.js').catch(() => {});
         }
     },
 

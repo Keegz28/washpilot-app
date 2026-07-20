@@ -219,7 +219,29 @@ const Bookings = {
                 }
                 Utils.hideModal();
                 Utils.toast('Job completed!');
-                this.render();
+
+                Utils.showModal('Record Payment?', `
+                    <p style="margin-bottom:16px;">Mark as done — record payment for ${Utils.escapeHTML(b.customerName || 'this job')}?</p>
+                    <div class="btn-group">
+                        <button class="btn btn-success btn-sm" id="bk-pay-yes">Record Payment</button>
+                        <button class="btn btn-outline btn-sm" id="bk-pay-no">Skip</button>
+                    </div>
+                `);
+
+                document.getElementById('bk-pay-yes').addEventListener('click', () => {
+                    Utils.hideModal();
+                    setTimeout(() => Income.showAddForm({
+                        bookingId: b.id,
+                        amount: b.price || 0,
+                        description: `Exterior Wash - ${b.customerName || ''}`,
+                        paymentMethod: 'cash'
+                    }), 200);
+                });
+
+                document.getElementById('bk-pay-no').addEventListener('click', () => {
+                    Utils.hideModal();
+                    this.render();
+                });
             });
         }
 

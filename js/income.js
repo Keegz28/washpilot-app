@@ -80,18 +80,19 @@ const Income = {
     },
 
     async showAddForm(existing) {
-        const isEdit = !!existing;
+        const isEdit = !!(existing && existing.id);
+        const prefill = existing && !isEdit ? existing : {};
         Utils.showModal(isEdit ? 'Edit Income' : 'Record Income', `
             <div class="form-group">
                 <label class="form-label">Amount (£)</label>
-                <input class="form-input" id="inc-amount" type="number" step="0.01" placeholder="0.00" value="${isEdit ? existing.amount : ''}">
+                <input class="form-input" id="inc-amount" type="number" step="0.01" placeholder="0.00" value="${isEdit ? existing.amount : (prefill.amount || '')}">
             </div>
             <div class="form-group">
                 <label class="form-label">Payment Method</label>
                 <select class="form-select" id="inc-method">
-                    <option value="cash" ${isEdit && existing.paymentMethod === 'cash' ? 'selected' : ''}>Cash</option>
-                    <option value="bank" ${isEdit && existing.paymentMethod === 'bank' ? 'selected' : ''}>Bank Transfer</option>
-                    <option value="card" ${isEdit && existing.paymentMethod === 'card' ? 'selected' : ''}>Card Reader</option>
+                    <option value="cash" ${((isEdit ? existing.paymentMethod : prefill.paymentMethod) === 'cash') ? 'selected' : ''}>Cash</option>
+                    <option value="bank" ${((isEdit ? existing.paymentMethod : prefill.paymentMethod) === 'bank') ? 'selected' : ''}>Bank Transfer</option>
+                    <option value="card" ${((isEdit ? existing.paymentMethod : prefill.paymentMethod) === 'card') ? 'selected' : ''}>Card Reader</option>
                 </select>
             </div>
             <div class="form-group">
@@ -100,13 +101,13 @@ const Income = {
             </div>
             <div class="form-group">
                 <label class="form-label">Description</label>
-                <input class="form-input" id="inc-desc" placeholder="e.g. Exterior Wash - Mrs Smith" value="${isEdit ? Utils.escapeHTML(existing.description || '') : ''}">
+                <input class="form-input" id="inc-desc" placeholder="e.g. Exterior Wash - Mrs Smith" value="${isEdit ? Utils.escapeHTML(existing.description || '') : Utils.escapeHTML(prefill.description || '')}">
             </div>
             <div class="form-group">
                 <label class="form-label">Linked Booking (optional)</label>
                 <select class="form-select" id="inc-booking">
                     <option value="">None</option>
-                    ${(await db.bookings.where('status').equals('done').toArray()).map(b => `<option value="${b.id}" ${isEdit && existing.bookingId === b.id ? 'selected' : ''}>${Utils.escapeHTML(b.customerName || 'Unknown')} - ${Utils.formatDate(b.date)}</option>`).join('')}
+                    ${(await db.bookings.where('status').equals('done').toArray()).map(b => `<option value="${b.id}" ${(isEdit && existing.bookingId === b.id) || prefill.bookingId === b.id ? 'selected' : ''}>${Utils.escapeHTML(b.customerName || 'Unknown')} - ${Utils.formatDate(b.date)}</option>`).join('')}
                 </select>
             </div>
             <button class="btn btn-primary" id="inc-save">${isEdit ? 'Update' : 'Save Income'}</button>

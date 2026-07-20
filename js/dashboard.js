@@ -85,5 +85,16 @@ const Dashboard = {
                 ${bookingsHTML}
             </div>
         `;
+
+        view.querySelectorAll('.list-item').forEach((item, i) => {
+            item.addEventListener('click', () => {
+                document.querySelector('.nav-btn[data-view="bookings"]').click();
+                setTimeout(() => Bookings.showDetail(todayBookings.sort((a, b) => {
+                    if (a.priority && !b.priority) return -1;
+                    if (!a.priority && b.priority) return 1;
+                    return new Date(a.date) - new Date(b.date);
+                })[i].id), 100);
+            });
+        });
     }
 };
