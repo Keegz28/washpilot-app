@@ -39,6 +39,8 @@ const Settings = {
                 <div class="card">
                     <div class="card-header"><span class="card-title">Data</span></div>
                     <button class="btn btn-outline" id="set-export" style="margin-bottom:8px;width:100%;">Export All Data as JSON</button>
+                    <button class="btn btn-outline" id="set-import" style="margin-bottom:8px;width:100%;">Import Data from JSON</button>
+                    <input type="file" id="set-import-file" accept=".json" style="display:none;">
                     <button class="btn btn-danger" id="set-clear" style="width:100%;">Clear All Data</button>
                 </div>
 
@@ -120,6 +122,56 @@ const Settings = {
             a.click();
             URL.revokeObjectURL(url);
             Utils.toast('Data exported');
+        });
+
+        document.getElementById('set-import').addEventListener('click', () => {
+            document.getElementById('set-import-file').click();
+        });
+
+        document.getElementById('set-import-file').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            try {
+                const text = await file.text();
+                const data = JSON.parse(text);
+
+                if (!data.exportDate) return Utils.toast('Invalid backup file');
+
+                Utils.showModal('Import Data', `
+                    <p style="margin-bottom:12px;">This will merge the following from <strong>${Utils.formatDate(data.exportDate)}</strong>:</p>
+                    <ul style="list-style:disc;padding-left:20px;margin-bottom:16px;font-size:14px;color:var(--text-secondary);">
+                        <li>${(data.customers || []).length} customers</li>
+                        <li>${(data.bookings || []).length} bookings</li>
+                        <li>${(data.income || []).length} income records</li>
+                        <li>${(data.expenses || []).length} expenses</li>
+                        <li>${(data.equipment || []).length} equipment items</li>
+                        <li>${(data.savingsGoals || []).length} savings goals</li>
+                        <li>${(data.invoices || []).length} invoices</li>
+                        <li>${(data.sops || []).length} SOPs</li>
+                    </ul>
+                    <p style="margin-bottom:16px;font-size:13px;color:var(--text-muted);">Existing data will be preserved. Duplicate IDs will be overwritten.</p>
+                    <button class="btn btn-primary" id="set-confirm-import">Import Now</button>
+                `);
+
+                document.getElementById('set-confirm-import').addEventListener('click', async () => {
+                    let count = 0;
+                    const tables = ['customers', 'bookings', 'income', 'expenses', 'equipment', 'savingsGoals', 'invoices', 'sops'];
+                    for (const table of tables) {
+                        if (data[table] && Array.isArray(data[table])) {
+                            await db[table].bulkPut(data[table]);
+                            count += data[table].length;
+                        }
+                    }
+                    Utils.hideModal();
+                    Utils.toast(`Imported ${count} records`);
+                    this.render(container);
+                });
+            } catch (err) {
+                Utils.toast('Error reading file — is it a valid WashPilot backup?');
+                console.error(err);
+            }
+            e.target.value = '';
         });
 
         document.getElementById('set-clear').addEventListener('click', () => {
