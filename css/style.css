@@ -737,9 +737,15 @@ input, textarea, select, button { font-family: inherit; }
     overflow: hidden;
     margin-bottom: var(--sp-4);
     border: 1px solid var(--border-subtle);
+    position: relative;
 }
 
 #route-map { height: 100%; width: 100%; }
+
+#route-map .leaflet-container {
+    height: 100%;
+    width: 100%;
+}
 
 /* --- Section Headers --- */
 .section-header {

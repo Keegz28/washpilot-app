@@ -46,54 +46,88 @@ const Route = {
         `;
 
         if (bookings.length > 0) {
-            this.initMap(bookings);
             document.getElementById('open-maps').addEventListener('click', () => this.openInMaps(bookings));
+            this.initMap(bookings);
         }
     },
 
     initMap(bookings) {
-        setTimeout(() => {
+        if (typeof L === 'undefined') {
+            document.getElementById('route-map').innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-text">Map library not loaded. Check your connection.</div></div>';
+            return;
+        }
+
+        const tryInit = (attempts) => {
             const mapEl = document.getElementById('route-map');
             if (!mapEl) return;
-
-            if (this.map) {
-                this.map.remove();
-                this.map = null;
+            if (mapEl.offsetWidth === 0 && attempts < 10) {
+                setTimeout(() => tryInit(attempts + 1), 200);
+                return;
             }
 
-            this.map = L.map('route-map').setView([53.35, -1.47], 13);
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap'
-            }).addTo(this.map);
+            try {
+                if (this.map) {
+                    this.map.remove();
+                    this.map = null;
+                }
 
-            this.markers = [];
-            const bounds = [];
+                this.map = L.map('route-map', { zoomControl: false }).setView([53.35, -1.47], 13);
+                L.control.zoom({ position: 'topright' }).addTo(this.map);
 
-            bookings.forEach((b, i) => {
-                this.geocode(b.address).then(coords => {
-                    if (!coords) return;
-                    const marker = L.marker(coords, {
-                        icon: L.divIcon({
-                            className: '',
-                            html: `<div style="width:28px;height:28px;background:var(--brand);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);">${i + 1}</div>`,
-                            iconSize: [28, 28],
-                            iconAnchor: [14, 14]
-                        })
-                    })
-                        .addTo(this.map)
-                        .bindPopup(`<strong>${i + 1}. ${Utils.escapeHTML(b.customerName || '')}</strong><br>${Utils.escapeHTML(b.address)}`);
-                    this.markers.push(marker);
-                    bounds.push(coords);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors',
+                    maxZoom: 19
+                }).addTo(this.map);
 
-                    if (bounds.length === bookings.length) {
-                        this.map.fitBounds(bounds, { padding: [30, 30] });
-                        if (bounds.length > 1) {
-                            L.polyline(bounds, { color: '#3b82f6', weight: 3, dashArray: '8, 8' }).addTo(this.map);
+                this.markers = [];
+                const bounds = [];
+                let geocoded = 0;
+
+                bookings.forEach((b, i) => {
+                    this.geocode(b.address).then(coords => {
+                        geocoded++;
+                        if (!coords) {
+                            if (geocoded === bookings.length && bounds.length > 0) {
+                                this.finishMap(bounds);
+                            }
+                            return;
                         }
-                    }
+
+                        const marker = L.marker(coords, {
+                            icon: L.divIcon({
+                                className: 'route-marker',
+                                html: `<div style="width:28px;height:28px;background:#3b82f6;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,0.3);">${i + 1}</div>`,
+                                iconSize: [28, 28],
+                                iconAnchor: [14, 14]
+                            })
+                        })
+                            .addTo(this.map)
+                            .bindPopup(`<strong>${i + 1}. ${Utils.escapeHTML(b.customerName || '')}</strong><br>${Utils.escapeHTML(b.address)}`);
+                        this.markers.push(marker);
+                        bounds.push(coords);
+
+                        if (geocoded === bookings.length) {
+                            this.finishMap(bounds);
+                        }
+                    });
                 });
-            });
-        }, 100);
+
+                setTimeout(() => this.map && this.map.invalidateSize(), 300);
+            } catch (e) {
+                console.error('Map init error:', e);
+            }
+        };
+
+        setTimeout(() => tryInit(0), 150);
+    },
+
+    finishMap(bounds) {
+        if (!this.map) return;
+        this.map.fitBounds(bounds, { padding: [30, 30] });
+        if (bounds.length > 1) {
+            L.polyline(bounds, { color: '#3b82f6', weight: 3, dashArray: '8, 8' }).addTo(this.map);
+        }
+        setTimeout(() => this.map && this.map.invalidateSize(), 100);
     },
 
     async geocode(address) {

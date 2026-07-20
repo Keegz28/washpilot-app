@@ -57,6 +57,10 @@ const App = {
         headerBtn.onclick = null;
 
         this.renderView(view);
+
+        if (view === 'route' && typeof Route !== 'undefined' && Route.map) {
+            setTimeout(() => Route.map.invalidateSize(), 350);
+        }
     },
 
     async renderView(view) {
