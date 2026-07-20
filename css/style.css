@@ -504,13 +504,21 @@ body {
     font-size: 15px;
     font-weight: 500;
     box-shadow: var(--shadow);
-    transition: transform 0.3s ease;
+    transition: transform 0.3s ease, opacity 0.3s ease;
     z-index: 300;
     white-space: nowrap;
     max-width: calc(100vw - 40px);
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
 }
 
-.toast.show { transform: translateX(-50%) translateY(0); }
+.toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+    visibility: visible;
+}
 
 /* Map */
 .map-container {
