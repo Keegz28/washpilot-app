@@ -2,7 +2,7 @@
     "name": "WashPilot",
     "short_name": "WashPilot",
     "description": "Mobile Car Wash Business Manager",
-    "start_url": "/",
+    "start_url": "./",
     "display": "standalone",
     "background_color": "#0f172a",
     "theme_color": "#0f172a",
