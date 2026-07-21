@@ -76,7 +76,6 @@ const App = {
     async renderMore() {
         const view = document.getElementById('view-more');
         view.innerHTML = `
-            <div style="margin-top:var(--sp-5);">
             <div class="card">
                 <div class="menu-item" data-action="customers">
                     <span class="menu-icon">${icon('users')}</span>
@@ -118,7 +117,6 @@ const App = {
                     <span class="menu-label">Settings</span>
                     <span class="menu-arrow">${icon('chevron-right')}</span>
                 </div>
-            </div>
             </div>
         `;
 

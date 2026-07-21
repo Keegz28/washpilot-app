@@ -73,11 +73,11 @@ const Dashboard = {
                 </div>
                 <div class="stat-card">
                     <div class="stat-value">${Utils.formatCurrency(monthIncome)}</div>
-                    <div class="stat-label">Month Income</div>
+                    <div class="stat-label">Month</div>
                 </div>
                 <div class="stat-card danger">
                     <div class="stat-value">${Utils.formatCurrency(monthExpenses)}</div>
-                    <div class="stat-label">Month Expenses</div>
+                    <div class="stat-label">Expenses</div>
                 </div>
             </div>
             ${goalsHTML}
