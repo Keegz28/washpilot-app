@@ -9,22 +9,24 @@ const Bookings = {
         customers.forEach(c => custMap[c.id] = c.name);
 
         const headerBtn = document.getElementById('header-action');
-        headerBtn.style.display = 'block';
-        headerBtn.textContent = '+ New';
+        headerBtn.style.display = 'flex';
+        headerBtn.innerHTML = `${icon('plus', 16)} New`;
         headerBtn.onclick = () => this.showAddForm();
 
         const filtered = this.filter === 'all' ? bookings : bookings.filter(b => b.status === this.filter);
 
         let listHTML = '';
         if (filtered.length === 0) {
-            listHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><div class="empty-state-text">No bookings yet</div></div>';
+            listHTML = `<div class="empty-state"><div class="empty-state-icon">${icon('calendar')}</div><div class="empty-state-text">No bookings yet</div></div>`;
         } else {
             listHTML = filtered.map(b => {
+                const statusIcon = b.status === 'done' ? icon('check-circle') : b.status === 'in-progress' ? icon('clock') : icon('calendar');
+                const iconClass = b.status === 'done' ? 'green' : b.status === 'in-progress' ? 'amber' : 'brand';
                 const statusBadge = `<span class="badge badge-${b.status === 'done' ? 'done' : b.status === 'in-progress' ? 'progress' : b.status === 'cancelled' ? 'cancelled' : 'booked'}">${b.status}</span>`;
-                const priorityBadge = b.priority ? '<span class="badge badge-priority" style="margin-left:4px;">Priority</span>' : '';
+                const priorityBadge = b.priority ? '<span class="badge badge-priority">Priority</span>' : '';
                 return `
                     <div class="list-item" data-id="${b.id}">
-                        <div class="list-icon">${b.status === 'done' ? '✅' : b.status === 'in-progress' ? '🔧' : '📋'}</div>
+                        <div class="list-icon ${iconClass}">${statusIcon}</div>
                         <div class="list-content">
                             <div class="list-title">${Utils.escapeHTML(b.customerName || custMap[b.customerId] || 'Unknown')}</div>
                             <div class="list-subtitle">${Utils.formatDate(b.date)} ${Utils.formatTime(b.date)} ${priorityBadge}</div>
@@ -61,9 +63,8 @@ const Bookings = {
         const customers = await db.customers.toArray();
         const custOptions = customers.map(c => `<option value="${c.id}">${Utils.escapeHTML(c.name)}</option>`).join('');
         const isEdit = !!existing;
-        const title = isEdit ? 'Edit Booking' : 'New Booking';
 
-        const body = `
+        Utils.showModal(isEdit ? 'Edit Booking' : 'New Booking', `
             <div class="form-group">
                 <label class="form-label">Customer</label>
                 <select class="form-select" id="bk-customer">
@@ -101,9 +102,7 @@ const Bookings = {
             </div>
             <button class="btn btn-primary" id="bk-save">${isEdit ? 'Update Booking' : 'Save Booking'}</button>
             ${isEdit ? '<button class="btn btn-danger" id="bk-delete" style="margin-top:8px;">Delete Booking</button>' : ''}
-        `;
-
-        Utils.showModal(title, body);
+        `);
 
         document.getElementById('bk-save').addEventListener('click', async () => {
             const customerId = document.getElementById('bk-customer').value;
@@ -122,14 +121,8 @@ const Bookings = {
             if (!custId && name) {
                 custId = Utils.generateId();
                 await db.customers.put({
-                    id: custId,
-                    name,
-                    phone,
-                    address,
-                    createdAt: new Date(),
-                    totalSpent: 0,
-                    visitCount: 0,
-                    notes: ''
+                    id: custId, name, phone, address,
+                    createdAt: new Date(), totalSpent: 0, visitCount: 0, notes: ''
                 });
             } else if (custId) {
                 if (phone) await db.customers.update(custId, { phone });
@@ -138,14 +131,8 @@ const Bookings = {
 
             const booking = {
                 id: isEdit ? existing.id : Utils.generateId(),
-                customerId: custId,
-                customerName: name,
-                phone,
-                address,
-                date: new Date(datetime),
-                price,
-                notes,
-                priority,
+                customerId: custId, customerName: name, phone, address,
+                date: new Date(datetime), price, notes, priority,
                 status: isEdit ? existing.status : 'booked',
                 createdAt: isEdit ? existing.createdAt : new Date()
             };
@@ -170,7 +157,7 @@ const Bookings = {
         const b = await db.bookings.get(id);
         if (!b) return;
 
-        const body = `
+        Utils.showModal(b.customerName || 'Booking', `
             <div style="margin-bottom:16px;">
                 <span class="badge badge-${b.status === 'done' ? 'done' : b.status === 'in-progress' ? 'progress' : b.status === 'cancelled' ? 'cancelled' : 'booked'}">${b.status}</span>
                 ${b.priority ? '<span class="badge badge-priority" style="margin-left:4px;">Priority</span>' : ''}
@@ -185,11 +172,9 @@ const Bookings = {
                 ${b.status === 'booked' ? '<button class="btn btn-primary btn-sm" id="bk-start">Start Job</button>' : ''}
                 ${b.status === 'in-progress' ? '<button class="btn btn-success btn-sm" id="bk-complete">Mark Done</button>' : ''}
             </div>
-            ${b.status !== 'cancelled' && b.status !== 'done' ? '<button class="btn btn-outline btn-sm" id="bk-cancel" style="margin-top:8px;width:100%;color:var(--danger);">Cancel Booking</button>' : ''}
-            ${b.status === 'done' ? `<button class="btn btn-outline btn-sm" id="bk-invoice" style="margin-top:8px;width:100%;">Generate Invoice</button>` : ''}
-        `;
-
-        Utils.showModal(b.customerName || 'Booking', body);
+            ${b.status !== 'cancelled' && b.status !== 'done' ? '<button class="btn btn-outline btn-sm" id="bk-cancel" style="margin-top:8px;width:100%;color:var(--red);">Cancel Booking</button>' : ''}
+            ${b.status === 'done' ? '<button class="btn btn-outline btn-sm" id="bk-invoice" style="margin-top:8px;width:100%;">Generate Invoice</button>' : ''}
+        `);
 
         document.getElementById('bk-edit').addEventListener('click', () => {
             Utils.hideModal();
@@ -218,10 +203,10 @@ const Bookings = {
                     }
                 }
                 Utils.hideModal();
-                Utils.toast('Job completed!');
+                Utils.toast('Job completed');
 
                 Utils.showModal('Record Payment?', `
-                    <p style="margin-bottom:16px;">Mark as done — record payment for ${Utils.escapeHTML(b.customerName || 'this job')}?</p>
+                    <p style="margin-bottom:16px;">Record payment for ${Utils.escapeHTML(b.customerName || 'this job')}?</p>
                     <div class="btn-group">
                         <button class="btn btn-success btn-sm" id="bk-pay-yes">Record Payment</button>
                         <button class="btn btn-outline btn-sm" id="bk-pay-no">Skip</button>
@@ -231,8 +216,7 @@ const Bookings = {
                 document.getElementById('bk-pay-yes').addEventListener('click', () => {
                     Utils.hideModal();
                     setTimeout(() => Income.showAddForm({
-                        bookingId: b.id,
-                        amount: b.price || 0,
+                        bookingId: b.id, amount: b.price || 0,
                         description: `Exterior Wash - ${b.customerName || ''}`,
                         paymentMethod: 'cash'
                     }), 200);

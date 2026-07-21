@@ -28,8 +28,8 @@ const Dashboard = {
             goalsHTML = `
                 <div class="card">
                     <div class="card-header">
-                        <span class="card-title">Savings Goals</span>
-                        <span class="card-subtitle">${Utils.formatCurrency(totalSaved)} of ${Utils.formatCurrency(totalTarget)}</span>
+                        <span class="card-title">Savings</span>
+                        <span class="card-subtitle">${Utils.formatCurrency(totalSaved)} / ${Utils.formatCurrency(totalTarget)}</span>
                     </div>
                     <div class="progress-bar"><div class="progress-fill${pct >= 100 ? ' success' : ''}" style="width:${pct}%"></div></div>
                 </div>
@@ -42,27 +42,30 @@ const Dashboard = {
                 if (a.priority && !b.priority) return -1;
                 if (!a.priority && b.priority) return 1;
                 return new Date(a.date) - new Date(b.date);
-            }).map(b => `
+            }).map(b => {
+                const statusIcon = b.status === 'done' ? icon('check-circle') : b.status === 'in-progress' ? icon('clock') : icon('calendar');
+                const iconClass = b.status === 'done' ? 'green' : b.status === 'in-progress' ? 'amber' : 'brand';
+                return `
                 <div class="list-item">
-                    <div class="list-icon">${b.status === 'done' ? '✅' : b.status === 'in-progress' ? '🔧' : '📋'}</div>
+                    <div class="list-icon ${iconClass}">${statusIcon}</div>
                     <div class="list-content">
                         <div class="list-title">${Utils.escapeHTML(b.customerName || 'Unknown')}</div>
-                        <div class="list-subtitle">${Utils.formatTime(b.date)} ${b.priority ? '<span class="badge badge-priority">Priority</span>' : ''}</div>
+                        <div class="list-subtitle">${Utils.formatTime(b.date)}${b.priority ? ' <span class="badge badge-priority">Priority</span>' : ''}</div>
                     </div>
                     <div class="list-right">
                         <span class="badge badge-${b.status === 'done' ? 'done' : b.status === 'in-progress' ? 'progress' : 'booked'}">${b.status}</span>
                     </div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
         } else {
-            bookingsHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><div class="empty-state-text">No jobs today</div></div>';
+            bookingsHTML = `<div class="empty-state"><div class="empty-state-icon">${icon('calendar')}</div><div class="empty-state-text">No jobs today</div></div>`;
         }
 
         view.innerHTML = `
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-value">${todayBookings.length}</div>
-                    <div class="stat-label">Today's Jobs</div>
+                    <div class="stat-label">Today</div>
                 </div>
                 <div class="stat-card success">
                     <div class="stat-value">${Utils.formatCurrency(weekIncome)}</div>
@@ -70,7 +73,7 @@ const Dashboard = {
                 </div>
                 <div class="stat-card">
                     <div class="stat-value">${Utils.formatCurrency(monthIncome)}</div>
-                    <div class="stat-label">This Month</div>
+                    <div class="stat-label">Month Income</div>
                 </div>
                 <div class="stat-card danger">
                     <div class="stat-value">${Utils.formatCurrency(monthExpenses)}</div>
@@ -79,7 +82,7 @@ const Dashboard = {
             </div>
             ${goalsHTML}
             <div class="section-header">
-                <span class="section-title">Today's Schedule</span>
+                <span class="section-title">Today</span>
             </div>
             <div class="card">
                 ${bookingsHTML}

@@ -14,15 +14,15 @@ const Expenses = {
         });
 
         const catBreakdown = Object.entries(byCat).sort((a, b) => b[1] - a[1]).map(([cat, amt]) =>
-            `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border-subtle);"><span>${cat}</span><span style="font-weight:600;">${Utils.formatCurrency(amt)}</span></div>`
+            `<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:14px;"><span>${cat}</span><span style="font-weight:600;">${Utils.formatCurrency(amt)}</span></div>`
         ).join('');
 
         const recent = records.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 20);
         let listHTML = recent.length === 0
-            ? '<div class="empty-state"><div class="empty-state-icon">💸</div><div class="empty-state-text">No expenses recorded</div></div>'
+            ? `<div class="empty-state"><div class="empty-state-icon">${icon('trending-down')}</div><div class="empty-state-text">No expenses recorded</div></div>`
             : recent.map(r => `
                 <div class="list-item" data-id="${r.id}">
-                    <div class="list-icon">💸</div>
+                    <div class="list-icon red">${icon('trending-down')}</div>
                     <div class="list-content">
                         <div class="list-title">${Utils.escapeHTML(r.description || r.category)}</div>
                         <div class="list-subtitle">${Utils.formatDate(r.date)} · ${r.category}</div>
@@ -32,10 +32,10 @@ const Expenses = {
             `).join('');
 
         container.innerHTML = `
-            <div style="padding:16px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-                    <h2 style="font-size:22px;font-weight:700;">Expenses</h2>
-                    <button class="btn btn-primary btn-sm" id="add-expense">+ Add</button>
+            <div style="padding:var(--sp-5);">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--sp-5);">
+                    <h2 style="font-size:22px;font-weight:700;letter-spacing:-0.4px;">Expenses</h2>
+                    <button class="btn btn-primary btn-sm" id="add-expense">Add</button>
                 </div>
                 <div class="stats-grid">
                     <div class="stat-card danger">
@@ -47,8 +47,8 @@ const Expenses = {
                         <div class="stat-label">This Year</div>
                     </div>
                 </div>
-                ${catBreakdown ? `<div class="card"><div class="card-header"><span class="card-title">Month by Category</span></div>${catBreakdown}</div>` : ''}
-                <div class="section-header"><span class="section-title">Recent Expenses</span></div>
+                ${catBreakdown ? `<div class="card"><div class="card-header"><span class="card-title">By Category</span></div>${catBreakdown}</div>` : ''}
+                <div class="section-header"><span class="section-title">Recent</span></div>
                 <div class="card">${listHTML}</div>
             </div>
         `;

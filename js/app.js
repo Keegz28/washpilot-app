@@ -76,47 +76,49 @@ const App = {
     async renderMore() {
         const view = document.getElementById('view-more');
         view.innerHTML = `
+            <div style="margin-top:var(--sp-5);">
             <div class="card">
                 <div class="menu-item" data-action="customers">
-                    <span class="menu-icon">👥</span>
+                    <span class="menu-icon">${icon('users')}</span>
                     <span class="menu-label">Customers</span>
-                    <span class="menu-arrow">›</span>
+                    <span class="menu-arrow">${icon('chevron-right')}</span>
                 </div>
                 <div class="menu-item" data-action="expenses">
-                    <span class="menu-icon">💸</span>
+                    <span class="menu-icon">${icon('trending-down')}</span>
                     <span class="menu-label">Expenses</span>
-                    <span class="menu-arrow">›</span>
+                    <span class="menu-arrow">${icon('chevron-right')}</span>
                 </div>
                 <div class="menu-item" data-action="equipment">
-                    <span class="menu-icon">🧰</span>
+                    <span class="menu-icon">${icon('wrench')}</span>
                     <span class="menu-label">Equipment & Stock</span>
-                    <span class="menu-arrow">›</span>
+                    <span class="menu-arrow">${icon('chevron-right')}</span>
                 </div>
                 <div class="menu-item" data-action="savings">
-                    <span class="menu-icon">🎯</span>
+                    <span class="menu-icon">${icon('target')}</span>
                     <span class="menu-label">Savings Goals</span>
-                    <span class="menu-arrow">›</span>
+                    <span class="menu-arrow">${icon('chevron-right')}</span>
                 </div>
                 <div class="menu-item" data-action="invoices">
-                    <span class="menu-icon">🧾</span>
+                    <span class="menu-icon">${icon('file-text')}</span>
                     <span class="menu-label">Invoices</span>
-                    <span class="menu-arrow">›</span>
+                    <span class="menu-arrow">${icon('chevron-right')}</span>
                 </div>
                 <div class="menu-item" data-action="tax">
-                    <span class="menu-icon">📊</span>
+                    <span class="menu-icon">${icon('bar-chart')}</span>
                     <span class="menu-label">Tax & Reports</span>
-                    <span class="menu-arrow">›</span>
+                    <span class="menu-arrow">${icon('chevron-right')}</span>
                 </div>
                 <div class="menu-item" data-action="sops">
-                    <span class="menu-icon">📖</span>
+                    <span class="menu-icon">${icon('book-open')}</span>
                     <span class="menu-label">SOPs & Training</span>
-                    <span class="menu-arrow">›</span>
+                    <span class="menu-arrow">${icon('chevron-right')}</span>
                 </div>
                 <div class="menu-item" data-action="settings">
-                    <span class="menu-icon">⚙️</span>
+                    <span class="menu-icon">${icon('settings')}</span>
                     <span class="menu-label">Settings</span>
-                    <span class="menu-arrow">›</span>
+                    <span class="menu-arrow">${icon('chevron-right')}</span>
                 </div>
+            </div>
             </div>
         `;
 
@@ -133,8 +135,8 @@ const App = {
         const content = document.getElementById('view-more');
         const backBtn = document.createElement('button');
         backBtn.className = 'btn btn-outline btn-sm';
-        backBtn.style.cssText = 'margin: 12px 16px; width: auto;';
-        backBtn.textContent = '← Back';
+        backBtn.style.cssText = 'margin:12px 16px;width:auto;display:inline-flex;gap:6px;align-items:center;';
+        backBtn.innerHTML = `${icon('arrow-left', 16)} Back`;
 
         const container = document.createElement('div');
         container.id = 'sub-view-container';

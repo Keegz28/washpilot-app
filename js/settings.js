@@ -6,8 +6,8 @@ const Settings = {
         const lockTimeout = await Utils.getSetting('lockTimeout', 10);
 
         container.innerHTML = `
-            <div style="padding:16px;">
-                <h2 style="font-size:22px;font-weight:700;margin-bottom:16px;">Settings</h2>
+            <div style="padding:var(--sp-5);">
+                <h2 style="font-size:22px;font-weight:700;letter-spacing:-0.4px;margin-bottom:var(--sp-5);">Settings</h2>
 
                 <div class="card">
                     <div class="card-header"><span class="card-title">Business Details</span></div>
@@ -139,7 +139,7 @@ const Settings = {
                 if (!data.exportDate) return Utils.toast('Invalid backup file');
 
                 Utils.showModal('Import Data', `
-                    <p style="margin-bottom:12px;">This will merge the following from <strong>${Utils.formatDate(data.exportDate)}</strong>:</p>
+                    <p style="margin-bottom:12px;">This will merge from <strong>${Utils.formatDate(data.exportDate)}</strong>:</p>
                     <ul style="list-style:disc;padding-left:20px;margin-bottom:16px;font-size:14px;color:var(--text-secondary);">
                         <li>${(data.customers || []).length} customers</li>
                         <li>${(data.bookings || []).length} bookings</li>
@@ -150,7 +150,7 @@ const Settings = {
                         <li>${(data.invoices || []).length} invoices</li>
                         <li>${(data.sops || []).length} SOPs</li>
                     </ul>
-                    <p style="margin-bottom:16px;font-size:13px;color:var(--text-tertiary);">Existing data will be preserved. Duplicate IDs will be overwritten.</p>
+                    <p style="margin-bottom:16px;font-size:13px;color:var(--text-tertiary);">Existing data preserved. Duplicate IDs overwritten.</p>
                     <button class="btn btn-primary" id="set-confirm-import">Import Now</button>
                 `);
 
@@ -168,7 +168,7 @@ const Settings = {
                     this.render(container);
                 });
             } catch (err) {
-                Utils.toast('Error reading file — is it a valid WashPilot backup?');
+                Utils.toast('Error reading file');
                 console.error(err);
             }
             e.target.value = '';
@@ -176,7 +176,7 @@ const Settings = {
 
         document.getElementById('set-clear').addEventListener('click', () => {
             Utils.showModal('Clear All Data?', `
-                <p style="margin-bottom:16px;color:var(--danger);">This will permanently delete ALL data. This cannot be undone.</p>
+                <p style="margin-bottom:16px;color:var(--red);">This will permanently delete ALL data. This cannot be undone.</p>
                 <button class="btn btn-danger" id="set-confirm-clear">Yes, Delete Everything</button>
             `);
 

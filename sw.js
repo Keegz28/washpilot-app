@@ -1,4 +1,4 @@
-const CACHE_NAME = 'washpilot-v5';
+const CACHE_NAME = 'washpilot-v6';
 const BASE = self.registration.scope;
 
 const ASSETS = [
@@ -8,6 +8,7 @@ const ASSETS = [
     'manifest.json',
     'icons/icon-192.svg',
     'icons/icon-512.svg',
+    'js/icons.js',
     'js/utils.js',
     'js/db.js',
     'js/auth.js',

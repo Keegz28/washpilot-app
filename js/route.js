@@ -17,21 +17,21 @@ const Route = {
                 <div id="route-map"></div>
             </div>
             <div class="section-header">
-                <span class="section-title">Today's Route (${bookings.length} stops)</span>
+                <span class="section-title">Today (${bookings.length} stops)</span>
             </div>
             <div class="card" id="route-stops">
                 ${bookings.length === 0
-                    ? '<div class="empty-state"><div class="empty-state-icon">🗺️</div><div class="empty-state-text">No jobs with addresses today</div></div>'
+                    ? `<div class="empty-state"><div class="empty-state-icon">${icon('map-pin')}</div><div class="empty-state-text">No jobs with addresses today</div></div>`
                     : bookings.sort((a, b) => {
                         if (a.priority && !b.priority) return -1;
                         if (!a.priority && b.priority) return 1;
                         return new Date(a.date) - new Date(b.date);
                     }).map((b, i) => `
                         <div class="list-item" data-idx="${i}">
-                            <div class="list-icon" style="background:var(--brand);color:white;border-radius:50%;font-weight:700;font-size:14px;">${i + 1}</div>
+                            <div class="list-icon brand" style="font-size:13px;font-weight:700;">${i + 1}</div>
                             <div class="list-content">
                                 <div class="list-title">${Utils.escapeHTML(b.customerName || 'Unknown')}</div>
-                                <div class="list-subtitle">${Utils.escapeHTML(b.address)} ${b.priority ? '<span class="badge badge-priority">Priority</span>' : ''}</div>
+                                <div class="list-subtitle">${Utils.escapeHTML(b.address)}${b.priority ? ' <span class="badge badge-priority">Priority</span>' : ''}</div>
                             </div>
                             <div class="list-right">
                                 <div style="font-size:13px;color:var(--text-secondary);">${Utils.formatTime(b.date)}</div>
@@ -41,7 +41,7 @@ const Route = {
                 }
             </div>
             ${bookings.length > 0 ? `
-                <button class="btn btn-primary" id="open-maps" style="margin-top:8px;">Open Walking Route in Maps</button>
+                <button class="btn btn-primary" id="open-maps" style="margin-top:8px;">Open Walking Route</button>
             ` : ''}
         `;
 
@@ -53,7 +53,7 @@ const Route = {
 
     initMap(bookings) {
         if (typeof L === 'undefined') {
-            document.getElementById('route-map').innerHTML = '<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-text">Map library not loaded. Check your connection.</div></div>';
+            document.getElementById('route-map').innerHTML = `<div class="empty-state"><div class="empty-state-icon">${icon('alert-circle')}</div><div class="empty-state-text">Map library not loaded</div></div>`;
             return;
         }
 
@@ -66,16 +66,12 @@ const Route = {
             }
 
             try {
-                if (this.map) {
-                    this.map.remove();
-                    this.map = null;
-                }
+                if (this.map) { this.map.remove(); this.map = null; }
 
                 this.map = L.map('route-map', { zoomControl: false }).setView([53.35, -1.47], 13);
                 L.control.zoom({ position: 'topright' }).addTo(this.map);
-
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '&copy; OpenStreetMap contributors',
+                    attribution: '&copy; OpenStreetMap',
                     maxZoom: 19
                 }).addTo(this.map);
 
@@ -87,9 +83,7 @@ const Route = {
                     this.geocode(b.address).then(coords => {
                         geocoded++;
                         if (!coords) {
-                            if (geocoded === bookings.length && bounds.length > 0) {
-                                this.finishMap(bounds);
-                            }
+                            if (geocoded === bookings.length && bounds.length > 0) this.finishMap(bounds);
                             return;
                         }
 
@@ -100,15 +94,11 @@ const Route = {
                                 iconSize: [28, 28],
                                 iconAnchor: [14, 14]
                             })
-                        })
-                            .addTo(this.map)
+                        }).addTo(this.map)
                             .bindPopup(`<strong>${i + 1}. ${Utils.escapeHTML(b.customerName || '')}</strong><br>${Utils.escapeHTML(b.address)}`);
                         this.markers.push(marker);
                         bounds.push(coords);
-
-                        if (geocoded === bookings.length) {
-                            this.finishMap(bounds);
-                        }
+                        if (geocoded === bookings.length) this.finishMap(bounds);
                     });
                 });
 
@@ -137,9 +127,7 @@ const Route = {
                 headers: { 'User-Agent': 'WashPilot/1.0' }
             });
             const data = await res.json();
-            if (data.length > 0) {
-                return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
-            }
+            if (data.length > 0) return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
         } catch (e) {}
         return null;
     },
@@ -147,9 +135,7 @@ const Route = {
     openInMaps(bookings) {
         if (bookings.length < 2) {
             this.geocode(bookings[0].address).then(coords => {
-                if (coords) {
-                    window.open(`https://www.google.com/maps/dir/?api=1&destination=${coords[0]},${coords[1]}&travelmode=walking`, '_blank');
-                }
+                if (coords) window.open(`https://www.google.com/maps/dir/?api=1&destination=${coords[0]},${coords[1]}&travelmode=walking`, '_blank');
             });
             return;
         }
@@ -166,8 +152,7 @@ const Route = {
             const waypoints = valid.slice(1, -1).map(c => `${c[0]},${c[1]}`).join('|');
             const origin = `${valid[0][0]},${valid[0][1]}`;
             const dest = `${valid[valid.length - 1][0]},${valid[valid.length - 1][1]}`;
-            const url = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&waypoints=${waypoints}&travelmode=walking`;
-            window.open(url, '_blank');
+            window.open(`https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${dest}&waypoints=${waypoints}&travelmode=walking`, '_blank');
         });
     }
 };

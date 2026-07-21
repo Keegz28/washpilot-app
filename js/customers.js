@@ -3,17 +3,18 @@ const Customers = {
         const customers = await db.customers.toArray();
         const searchHTML = `
             <div class="search-bar">
+                <span class="search-icon">${icon('search')}</span>
                 <input type="text" id="cust-search" placeholder="Search customers...">
             </div>
         `;
 
         let listHTML = '';
         if (customers.length === 0) {
-            listHTML = '<div class="empty-state"><div class="empty-state-icon">👥</div><div class="empty-state-text">No customers yet</div></div>';
+            listHTML = `<div class="empty-state"><div class="empty-state-icon">${icon('users')}</div><div class="empty-state-text">No customers yet</div></div>`;
         } else {
             listHTML = '<div class="card" id="cust-list">' + customers.sort((a, b) => a.name.localeCompare(b.name)).map(c => `
                 <div class="list-item" data-id="${c.id}">
-                    <div class="list-icon">👤</div>
+                    <div class="list-icon">${icon('users')}</div>
                     <div class="list-content">
                         <div class="list-title">${Utils.escapeHTML(c.name)}</div>
                         <div class="list-subtitle">${Utils.escapeHTML(c.phone || 'No phone')} · ${c.visitCount || 0} visits</div>
@@ -26,8 +27,8 @@ const Customers = {
         }
 
         container.innerHTML = `
-            <div style="padding:16px;">
-                <h2 style="font-size:22px;font-weight:700;margin-bottom:16px;">Customers</h2>
+            <div style="padding:var(--sp-5);">
+                <h2 style="font-size:22px;font-weight:700;letter-spacing:-0.4px;margin-bottom:var(--sp-5);">Customers</h2>
                 ${searchHTML}
                 ${listHTML}
             </div>
@@ -51,16 +52,19 @@ const Customers = {
         if (!c) return;
 
         const bookings = await db.bookings.where('customerId').equals(id).toArray();
-        const history = bookings.sort((a, b) => new Date(b.date) - new Date(a.date)).map(b => `
+        const history = bookings.sort((a, b) => new Date(b.date) - new Date(a.date)).map(b => {
+            const statusIcon = b.status === 'done' ? icon('check-circle') : icon('calendar');
+            const iconClass = b.status === 'done' ? 'green' : 'brand';
+            return `
             <div class="list-item">
-                <div class="list-icon">${b.status === 'done' ? '✅' : '📋'}</div>
+                <div class="list-icon ${iconClass}">${statusIcon}</div>
                 <div class="list-content">
                     <div class="list-title">${Utils.formatDate(b.date)}</div>
                     <div class="list-subtitle"><span class="badge badge-${b.status}">${b.status}</span></div>
                 </div>
                 <div class="list-right"><div class="list-amount income">${Utils.formatCurrency(b.price)}</div></div>
-            </div>
-        `).join('');
+            </div>`;
+        }).join('');
 
         Utils.showModal(c.name, `
             <p style="margin-bottom:8px;"><strong>Phone:</strong> ${Utils.escapeHTML(c.phone || 'N/A')}</p>
@@ -68,7 +72,7 @@ const Customers = {
             <p style="margin-bottom:8px;"><strong>Visits:</strong> ${c.visitCount || 0}</p>
             <p style="margin-bottom:8px;"><strong>Total Spent:</strong> ${Utils.formatCurrency(c.totalSpent || 0)}</p>
             <p style="margin-bottom:8px;"><strong>Notes:</strong> ${Utils.escapeHTML(c.notes || 'None')}</p>
-            <div class="section-header" style="margin-top:16px;"><span class="section-title">Visit History</span></div>
+            <div class="section-header" style="margin-top:16px;"><span class="section-title">History</span></div>
             ${history || '<p style="color:var(--text-secondary);">No visits yet</p>'}
             <div class="btn-group" style="margin-top:16px;">
                 <button class="btn btn-outline btn-sm" id="cust-edit">Edit</button>

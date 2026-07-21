@@ -4,25 +4,25 @@ const SOP = {
 
         let listHTML = '';
         if (sops.length === 0) {
-            listHTML = '<div class="empty-state"><div class="empty-state-icon">📖</div><div class="empty-state-text">No SOPs created yet</div></div>';
+            listHTML = `<div class="empty-state"><div class="empty-state-icon">${icon('book-open')}</div><div class="empty-state-text">No SOPs created yet</div></div>`;
         } else {
             listHTML = sops.map(s => `
                 <div class="list-item" data-id="${s.id}">
-                    <div class="list-icon">📖</div>
+                    <div class="list-icon brand">${icon('book-open')}</div>
                     <div class="list-content">
                         <div class="list-title">${Utils.escapeHTML(s.title)}</div>
                         <div class="list-subtitle">${(s.steps || []).length} steps · Updated ${Utils.formatDate(s.updatedAt || s.createdAt)}</div>
                     </div>
-                    <div class="list-right"><span class="menu-arrow">›</span></div>
+                    <div class="list-right"><span class="menu-arrow">${icon('chevron-right')}</span></div>
                 </div>
             `).join('');
         }
 
         container.innerHTML = `
-            <div style="padding:16px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-                    <h2 style="font-size:22px;font-weight:700;">SOPs & Training</h2>
-                    <button class="btn btn-primary btn-sm" id="add-sop">+ New SOP</button>
+            <div style="padding:var(--sp-5);">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--sp-5);">
+                    <h2 style="font-size:22px;font-weight:700;letter-spacing:-0.4px;">SOPs & Training</h2>
+                    <button class="btn btn-primary btn-sm" id="add-sop">New SOP</button>
                 </div>
                 <div class="card">${listHTML}</div>
             </div>
@@ -89,13 +89,13 @@ const SOP = {
                 stepsList.innerHTML = '<p style="color:var(--text-secondary);font-size:14px;">No steps yet. Add your first step below.</p>';
             } else {
                 stepsList.innerHTML = steps.map((s, i) => `
-                    <div class="sop-step" style="cursor:grab;">
+                    <div class="sop-step">
                         <div class="sop-step-num">${i + 1}</div>
                         <div class="sop-step-content">
                             <div class="sop-step-title">${Utils.escapeHTML(s.title)}</div>
                             ${s.description ? `<div class="sop-step-desc">${Utils.escapeHTML(s.description)}</div>` : ''}
                         </div>
-                        <button class="btn btn-danger btn-sm rm-step" data-idx="${i}" style="padding:4px 8px;font-size:12px;">✕</button>
+                        <button class="btn btn-danger btn-sm rm-step" data-idx="${i}" style="padding:4px 8px;font-size:12px;">X</button>
                     </div>
                 `).join('');
                 stepsList.querySelectorAll('.rm-step').forEach(btn => {
@@ -116,14 +116,14 @@ const SOP = {
                 <label class="form-label">Steps</label>
                 <div id="sop-steps"></div>
             </div>
-            <div style="background:var(--bg-input);border-radius:8px;padding:12px;margin-bottom:16px;">
+            <div style="background:var(--bg-input);border-radius:var(--r-sm);padding:12px;margin-bottom:16px;border:1px solid var(--border);">
                 <div class="form-group" style="margin-bottom:8px;">
                     <input class="form-input" id="new-step-title" placeholder="Step title">
                 </div>
                 <div class="form-group" style="margin-bottom:8px;">
                     <textarea class="form-textarea" id="new-step-desc" placeholder="Description (optional)" style="min-height:60px;"></textarea>
                 </div>
-                <button class="btn btn-outline btn-sm" id="add-step" style="width:100%;">+ Add Step</button>
+                <button class="btn btn-outline btn-sm" id="add-step" style="width:100%;">Add Step</button>
             </div>
             <button class="btn btn-primary" id="sop-save">${isEdit ? 'Update SOP' : 'Create SOP'}</button>
         `);
@@ -167,8 +167,6 @@ const SOP = {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
 
-            const businessName = 'WashPilot';
-
             doc.setFontSize(22);
             doc.setFont(undefined, 'bold');
             doc.text(sop.title, 20, 25);
@@ -176,17 +174,14 @@ const SOP = {
             doc.setFontSize(10);
             doc.setFont(undefined, 'normal');
             doc.setTextColor(120, 120, 120);
-            doc.text(`${businessName} · ${Utils.formatDate(new Date())}`, 20, 33);
+            doc.text(`WashPilot · ${Utils.formatDate(new Date())}`, 20, 33);
 
             doc.setDrawColor(200, 200, 200);
             doc.line(20, 37, 190, 37);
 
             let y = 47;
             (sop.steps || []).forEach((step, i) => {
-                if (y > 260) {
-                    doc.addPage();
-                    y = 20;
-                }
+                if (y > 260) { doc.addPage(); y = 20; }
 
                 doc.setFillColor(59, 130, 246);
                 doc.circle(25, y - 2, 4, 'F');
@@ -217,7 +212,7 @@ const SOP = {
             doc.text('Generated by WashPilot', 105, 285, { align: 'center' });
 
             doc.save(`${sop.title.replace(/[^a-z0-9]/gi, '_')}_SOP.pdf`);
-            Utils.toast('PDF exported!');
+            Utils.toast('PDF exported');
         } catch (e) {
             Utils.toast('Error generating PDF');
             console.error(e);

@@ -7,30 +7,30 @@ const Equipment = {
 
         let listHTML = '';
         if (items.length === 0) {
-            listHTML = '<div class="empty-state"><div class="empty-state-icon">🧰</div><div class="empty-state-text">No equipment tracked yet</div></div>';
+            listHTML = `<div class="empty-state"><div class="empty-state-icon">${icon('package')}</div><div class="empty-state-text">No equipment tracked yet</div></div>`;
         } else {
             listHTML = items.sort((a, b) => a.name.localeCompare(b.name)).map(i => {
                 const isLow = i.quantity <= (i.lowStockAt || 2);
                 return `
                     <div class="list-item" data-id="${i.id}">
-                        <div class="list-icon" style="${isLow ? 'background:rgba(239,68,68,0.15);' : ''}">${isLow ? '⚠️' : '✅'}</div>
+                        <div class="list-icon ${isLow ? 'red' : 'green'}">${isLow ? icon('alert-circle') : icon('check-circle')}</div>
                         <div class="list-content">
                             <div class="list-title">${Utils.escapeHTML(i.name)}</div>
-                            <div class="list-subtitle">${i.category} ${i.lowStockAt ? '· Alert at ' + i.lowStockAt : ''}</div>
+                            <div class="list-subtitle">${i.category}${i.lowStockAt ? ' · Alert at ' + i.lowStockAt : ''}</div>
                         </div>
-                        <div class="list-right"><div style="font-size:18px;font-weight:700;${isLow ? 'color:var(--danger);' : ''}">${i.quantity}</div></div>
+                        <div class="list-right"><div style="font-size:16px;font-weight:700;font-variant-numeric:tabular-nums;${isLow ? 'color:var(--red);' : ''}">${i.quantity}</div></div>
                     </div>`;
             }).join('');
         }
 
         container.innerHTML = `
-            <div style="padding:16px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-                    <h2 style="font-size:22px;font-weight:700;">Equipment & Stock</h2>
-                    <button class="btn btn-primary btn-sm" id="add-equip">+ Add</button>
+            <div style="padding:var(--sp-5);">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--sp-5);">
+                    <h2 style="font-size:22px;font-weight:700;letter-spacing:-0.4px;">Equipment & Stock</h2>
+                    <button class="btn btn-primary btn-sm" id="add-equip">Add</button>
                 </div>
-                ${lowStock.length > 0 ? `<div class="card" style="border-color:var(--danger);">
-                    <div class="card-header"><span class="card-title" style="color:var(--danger);">⚠️ Low Stock (${lowStock.length})</span></div>
+                ${lowStock.length > 0 ? `<div class="card" style="border-color:var(--red);">
+                    <div class="card-header"><span class="card-title" style="color:var(--red);">Low Stock (${lowStock.length})</span></div>
                     ${lowStock.map(i => `<p style="font-size:14px;padding:4px 0;">${Utils.escapeHTML(i.name)} — ${i.quantity} left</p>`).join('')}
                 </div>` : ''}
                 <div class="section-header"><span class="section-title">All Items</span></div>

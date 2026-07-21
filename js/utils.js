@@ -36,6 +36,8 @@ const Utils = {
 
     showModal(title, bodyHTML, footerHTML = '') {
         document.getElementById('modal-title').textContent = title;
+        const closeBtn = document.getElementById('modal-close');
+        closeBtn.innerHTML = icon('x');
         const body = document.getElementById('modal-body');
         body.innerHTML = bodyHTML;
         if (footerHTML) {
@@ -43,7 +45,7 @@ const Utils = {
             if (!footer) {
                 footer = document.createElement('div');
                 footer.className = 'modal-footer';
-                footer.style.cssText = 'padding-top:16px;border-top:1px solid var(--border-subtle);margin-top:16px;';
+                footer.style.cssText = 'padding-top:16px;border-top:1px solid var(--border);margin-top:16px;';
                 body.appendChild(footer);
             }
             footer.innerHTML = footerHTML;

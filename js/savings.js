@@ -6,14 +6,14 @@ const Savings = {
 
         let goalsHTML = '';
         if (goals.length === 0) {
-            goalsHTML = '<div class="empty-state"><div class="empty-state-icon">🎯</div><div class="empty-state-text">No savings goals yet</div></div>';
+            goalsHTML = `<div class="empty-state"><div class="empty-state-icon">${icon('target')}</div><div class="empty-state-text">No savings goals yet</div></div>`;
         } else {
             goalsHTML = goals.map(g => {
                 const pct = g.targetAmount > 0 ? Math.min(100, ((g.currentAmount || 0) / g.targetAmount) * 100) : 0;
                 const remaining = Math.max(0, g.targetAmount - (g.currentAmount || 0));
-                const daysLeft = avgDaily > 0 ? Math.ceil(remaining / avgDaily) : '∞';
+                const daysLeft = avgDaily > 0 ? Math.ceil(remaining / avgDaily) : '\u221E';
                 return `
-                    <div class="card" data-id="${g.id}" style="cursor:pointer;">
+                    <div class="card" data-id="${g.id}">
                         <div class="card-header">
                             <span class="card-title">${Utils.escapeHTML(g.name)}</span>
                             <span class="card-subtitle">${pct.toFixed(0)}%</span>
@@ -23,9 +23,9 @@ const Savings = {
                             <span>${Utils.formatCurrency(g.currentAmount || 0)} saved</span>
                             <span>Target: ${Utils.formatCurrency(g.targetAmount)}</span>
                         </div>
-                        ${remaining > 0 ? `<div style="font-size:12px;color:var(--text-tertiary);margin-top:4px;">~${daysLeft} days to go at current rate</div>` : '<div style="font-size:12px;color:var(--success);margin-top:4px;">Goal reached! 🎉</div>'}
+                        ${remaining > 0 ? `<div style="font-size:12px;color:var(--text-tertiary);margin-top:4px;">~${daysLeft} days to go</div>` : '<div style="font-size:12px;color:var(--green);margin-top:4px;">Goal reached</div>'}
                         <div style="margin-top:12px;display:flex;gap:8px;">
-                            <button class="btn btn-primary btn-sm add-funds-btn" data-id="${g.id}">+ Add Funds</button>
+                            <button class="btn btn-primary btn-sm add-funds-btn" data-id="${g.id}">Add Funds</button>
                             <button class="btn btn-outline btn-sm edit-goal-btn" data-id="${g.id}">Edit</button>
                             <button class="btn btn-danger btn-sm del-goal-btn" data-id="${g.id}">Delete</button>
                         </div>
@@ -35,15 +35,15 @@ const Savings = {
         }
 
         container.innerHTML = `
-            <div style="padding:16px;">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-                    <h2 style="font-size:22px;font-weight:700;">Savings Goals</h2>
-                    <button class="btn btn-primary btn-sm" id="add-goal">+ New Goal</button>
+            <div style="padding:var(--sp-5);">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--sp-5);">
+                    <h2 style="font-size:22px;font-weight:700;letter-spacing:-0.4px;">Savings Goals</h2>
+                    <button class="btn btn-primary btn-sm" id="add-goal">New Goal</button>
                 </div>
-                <div class="card" style="margin-bottom:16px;">
+                <div class="card" style="margin-bottom:var(--sp-4);">
                     <div class="card-title" style="margin-bottom:4px;">Avg Daily Income</div>
-                    <div style="font-size:20px;font-weight:700;color:var(--success);">${Utils.formatCurrency(avgDaily)}</div>
-                    <div style="font-size:12px;color:var(--text-tertiary);">Based on last 30 days</div>
+                    <div style="font-size:24px;font-weight:700;color:var(--green);letter-spacing:-0.5px;">${Utils.formatCurrency(avgDaily)}</div>
+                    <div style="font-size:12px;color:var(--text-tertiary);">Last 30 days</div>
                 </div>
                 ${goalsHTML}
             </div>
@@ -147,7 +147,7 @@ const Savings = {
             });
 
             Utils.hideModal();
-            Utils.toast(`${Utils.formatCurrency(amount)} added!`);
+            Utils.toast(`${Utils.formatCurrency(amount)} added`);
             const container = document.getElementById('sub-view-container');
             if (container) this.render(container);
         });

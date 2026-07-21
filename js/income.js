@@ -1,17 +1,13 @@
 const Income = {
-    tab: 'overview',
-
     async render() {
         const view = document.getElementById('view-income');
         const records = await db.income.toArray();
-        const bookings = await db.bookings.toArray();
         const today = Utils.today();
         const weekStart = Utils.getWeekStart();
         const monthStart = Utils.getMonthStart();
 
         const todayIncome = records.filter(r => {
-            const d = new Date(r.date);
-            d.setHours(0, 0, 0, 0);
+            const d = new Date(r.date); d.setHours(0,0,0,0);
             return d.getTime() === today.getTime();
         }).reduce((s, r) => s + r.amount, 0);
 
@@ -25,23 +21,24 @@ const Income = {
 
         const recent = records.sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 20);
         let listHTML = recent.length === 0
-            ? '<div class="empty-state"><div class="empty-state-icon">💰</div><div class="empty-state-text">No income recorded yet</div></div>'
-            : recent.map(r => `
+            ? `<div class="empty-state"><div class="empty-state-icon">${icon('dollar-sign')}</div><div class="empty-state-text">No income recorded yet</div></div>`
+            : recent.map(r => {
+                const methodIcon = r.paymentMethod === 'cash' ? icon('dollar-sign') : r.paymentMethod === 'bank' ? icon('building') : icon('credit-card');
+                const methodClass = r.paymentMethod === 'cash' ? 'green' : r.paymentMethod === 'bank' ? 'brand' : '';
+                return `
                 <div class="list-item" data-id="${r.id}">
-                    <div class="list-icon" style="background:${r.paymentMethod === 'cash' ? 'rgba(34,197,94,0.15)' : r.paymentMethod === 'bank' ? 'rgba(59,130,246,0.15)' : 'rgba(168,85,247,0.15)'};">
-                        ${r.paymentMethod === 'cash' ? '💵' : r.paymentMethod === 'bank' ? '🏦' : '💳'}
-                    </div>
+                    <div class="list-icon ${methodClass}">${methodIcon}</div>
                     <div class="list-content">
                         <div class="list-title">${Utils.escapeHTML(r.description || 'Payment')}</div>
-                        <div class="list-subtitle">${Utils.formatDate(r.date)} · <span class="badge badge-${r.paymentMethod}">${r.paymentMethod}</span></div>
+                        <div class="list-subtitle">${Utils.formatDate(r.date)} <span class="badge badge-${r.paymentMethod}">${r.paymentMethod}</span></div>
                     </div>
                     <div class="list-right"><div class="list-amount income">${Utils.formatCurrency(r.amount)}</div></div>
-                </div>
-            `).join('');
+                </div>`;
+            }).join('');
 
         const headerBtn = document.getElementById('header-action');
-        headerBtn.style.display = 'block';
-        headerBtn.textContent = '+ Add';
+        headerBtn.style.display = 'flex';
+        headerBtn.innerHTML = `${icon('plus', 16)} Add`;
         headerBtn.onclick = () => this.showAddForm();
 
         view.innerHTML = `
@@ -56,18 +53,18 @@ const Income = {
                 </div>
                 <div class="stat-card">
                     <div class="stat-value">${Utils.formatCurrency(monthIncome)}</div>
-                    <div class="stat-label">This Month</div>
+                    <div class="stat-label">Month</div>
                 </div>
             </div>
             <div class="card">
-                <div class="card-header"><span class="card-title">By Payment Method (Month)</span></div>
-                <div style="display:flex;gap:12px;flex-wrap:wrap;">
-                    <span>💵 Cash: ${Utils.formatCurrency(byMethod.cash)}</span>
-                    <span>🏦 Bank: ${Utils.formatCurrency(byMethod.bank)}</span>
-                    <span>💳 Card: ${Utils.formatCurrency(byMethod.card)}</span>
+                <div class="card-header"><span class="card-title">By Method (Month)</span></div>
+                <div style="display:flex;gap:16px;font-size:14px;">
+                    <span>Cash: ${Utils.formatCurrency(byMethod.cash)}</span>
+                    <span>Bank: ${Utils.formatCurrency(byMethod.bank)}</span>
+                    <span>Card: ${Utils.formatCurrency(byMethod.card)}</span>
                 </div>
             </div>
-            <div class="section-header"><span class="section-title">Recent Income</span></div>
+            <div class="section-header"><span class="section-title">Recent</span></div>
             <div class="card">${listHTML}</div>
         `;
 
